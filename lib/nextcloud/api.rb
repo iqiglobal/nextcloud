@@ -12,7 +12,7 @@ module Nextcloud
     # @option args [String] :username Nextcloud instance administrator username
     # @option args [String] :password Nextcloud instance administrator password
     def initialize(args)
-      @url = URI(args[:url] + "/ocs/v2.php/cloud/")
+      @url = URI(args[:url] + "/nextcloud/ocs/v2.php/cloud/")
       @username = args[:username]
       @password = args[:password]
     end
