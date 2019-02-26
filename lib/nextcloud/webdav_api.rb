@@ -8,7 +8,7 @@ module Nextcloud
     # @params args [Hash] Hash with url, username and password
     def initialize(args)
       super
-      @url = URI(@url.scheme + "://" + @url.host + "/" + DAV_URL)
+      @url = URI(@url.scheme + "://" + @url.host + "/nextcloud/" + DAV_URL)
     end
 
     # Initiates WebDAV Directory class
