@@ -21,7 +21,7 @@ module Nextcloud
         super(args)
 
         @url = URI(
-          @url.scheme + "://" + @url.host + "/nextcloud/ocs/v2.php/apps/files_sharing/api/v1/"
+          @url.scheme + "://" + @url.host + "/iqidrive/ocs/v2.php/apps/files_sharing/api/v1/"
         )
       end
 
