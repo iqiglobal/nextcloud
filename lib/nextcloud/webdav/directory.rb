@@ -158,13 +158,13 @@ module Nextcloud
 
           if skip_first
             if index == 0
-              @directory = Models::Directory.new(params)
+              @directory = Models::Directory.new(**params)
             else
               @directory.add(params)
             end
           else
             @directory = [] if @directory.nil?
-            @directory << Models::Directory.new(params.merge(skip_contents: true))
+            @directory << Models::Directory.new(**params.merge(skip_contents: true))
           end
         end
         @directory
