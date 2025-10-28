@@ -128,13 +128,13 @@ module Nextcloud
       # @param skip_first [Boolean] Skip or not first element
       # @return [Object,Array] Returns Object if first element not skipped, array otherwise
       def directory(response, skip_first = true)
-        response = doc_to_hash(response).try(:[], "multistatus").try(:[], "response")
+        response = doc_to_hash(response)&.dig("multistatus", "response")
         response = [response] if response.is_a? Hash
 
         return [] if response.nil?
 
         response.each_with_index do |h, index|
-          prop = h["propstat"].try(:[], 0).try(:[], "prop") || h["propstat"]["prop"]
+          prop = h["propstat"]&.dig(0, "prop") || h["propstat"]["prop"]
 
           params = {
               href: h["href"],

@@ -28,7 +28,7 @@ module Nextcloud
       # @return [Array] All group folders
       def folders
         response = request(:get, "folders")
-        h = doc_to_hash(response, "//data").try(:[], "data").try(:[], "element")
+        h = doc_to_hash(response, "//data")&.dig("data", "element")
         h = [h] if h.class == Hash
         add_meta(response, h)
       end
@@ -39,7 +39,7 @@ module Nextcloud
       # @return [Integer] Folder ID
       def get_folder_id(name)
         response = request(:get, "folders")
-        h = doc_to_hash(response, "//data").try(:[], "data").try(:[], "element")
+        h = doc_to_hash(response, "//data")&.dig("data", "element")
         group = h.select { |folder| folder["mount_point"] == name }&.first
         unless group.nil?
           return group["id"]
@@ -52,7 +52,7 @@ module Nextcloud
       # @return [Hash] Information about a group folder
       def find(folderid)
         response = request(:get, "folders/#{folderid}")
-        h = doc_to_hash(response, "//data").try(:[], "data")
+        h = doc_to_hash(response, "//data")&.[]("data")
         add_meta(response, h)
       end
 
@@ -63,7 +63,7 @@ module Nextcloud
       def create(mountpoint)
         args = local_variables.reduce({}) { |c, i| c[i] = binding.local_variable_get(i); c }
         response = request(:post, "folders", args)
-        h = doc_to_hash(response, "//data").try(:[], "data")
+        h = doc_to_hash(response, "//data")&.[]("data")
         add_meta(response, h)
       end
 
@@ -73,7 +73,7 @@ module Nextcloud
       # @return [Bool] True on success
       def destroy(folderid)
         response = request(:delete, "folders/#{folderid}")
-        h = doc_to_hash(response, "//data").try(:[], "data")
+        h = doc_to_hash(response, "//data")&.[]("data")
         return h == "1"
       end
 
@@ -85,7 +85,7 @@ module Nextcloud
       def give_access(folderid, group)
         args = local_variables.reduce({}) { |c, i| c[i] = binding.local_variable_get(i); c }
         response = request(:post, "folders/#{folderid}/groups", args)
-        h = doc_to_hash(response, "//data").try(:[], "data")
+        h = doc_to_hash(response, "//data")&.[]("data")
         return h == "1"
       end
 
@@ -95,7 +95,7 @@ module Nextcloud
       # @return [Bool] True on success
       def remove_access(folderid, group)
         response = request(:delete, "folders/#{folderid}/groups/#{group}")
-        h = doc_to_hash(response, "//data").try(:[], "data")
+        h = doc_to_hash(response, "//data")&.[]("data")
         return h == "1"
       end
 
@@ -114,7 +114,7 @@ module Nextcloud
       def set_permissions(folderid, group, permissions)
         args = local_variables.reduce({}) { |c, i| c[i] = binding.local_variable_get(i); c }
         response = request(:post, "folders/#{folderid}/groups/#{group}", args)
-        h = doc_to_hash(response, "//data").try(:[], "data")
+        h = doc_to_hash(response, "//data")&.[]("data")
         return h == "1"
       end
 
@@ -126,7 +126,7 @@ module Nextcloud
       def set_quota(folderid, quota)
         args = local_variables.reduce({}) { |c, i| c[i] = binding.local_variable_get(i); c }
         response = request(:post, "folders/#{folderid}/quota", args)
-        h = doc_to_hash(response, "//data").try(:[], "data")
+        h = doc_to_hash(response, "//data")&.[]("data")
         return h == "1"
       end
 
@@ -138,7 +138,7 @@ module Nextcloud
       def rename_folder(folderid, mountpoint)
         args = local_variables.reduce({}) { |c, i| c[i] = binding.local_variable_get(i); c }
         response = request(:post, "folders/#{folderid}/mountpoint", args)
-        h = doc_to_hash(response, "//data").try(:[], "data")
+        h = doc_to_hash(response, "//data")&.[]("data")
         return h == "1"
       end
     end

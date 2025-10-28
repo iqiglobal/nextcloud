@@ -32,7 +32,7 @@ module Nextcloud
       # @return [Hash] Information about share with meta
       def find(shareid)
         response = request(:get, "shares/#{shareid}")
-        h = doc_to_hash(response, "//data/element").try(:[], "element")
+        h = doc_to_hash(response, "//data/element")&.[]("element")
         add_meta(response, h)
       end
 
@@ -41,7 +41,7 @@ module Nextcloud
       # @return [Array] All shares of authenticated user
       def all
         response = request(:get, "shares")
-        h = doc_to_hash(response, "//data").try(:[], "data").try(:[], "element")
+        h = doc_to_hash(response, "//data")&.dig("data", "element")
         h = [h] if h.class == Hash
         add_meta(response, h)
       end
@@ -57,7 +57,7 @@ module Nextcloud
       #   directory contents
       def specific(path, reshares = nil, subfiles = nil)
         response = request(:get, "shares?path=#{path}&reshares=#{reshares}&subfiles=#{subfiles}")
-        h = doc_to_hash(response, "//data").try(:[], "data").try(:[], "element")
+        h = doc_to_hash(response, "//data")&.dig("data", "element")
         h = [h] if h.class == Hash
         add_meta(response, h)
       end
@@ -148,7 +148,7 @@ module Nextcloud
         # @return [Array] List of accepted Federated Cloud Shares
         def accepted
           response = @api.request(:get, "/remote_shares")
-          h = doc_to_hash(response, "//data").try(:[], "data").try(:[], "element")
+          h = doc_to_hash(response, "//data")&.dig("data", "element")
           h = [h] if h.class == Hash
           add_meta(response, h)
         end
@@ -158,7 +158,7 @@ module Nextcloud
         # @return [Array] List of pending Federated Cloud Shares
         def pending
           response = @api.request(:get, "/remote_shares/pending")
-          h = doc_to_hash(response, "//data").try(:[], "data").try(:[], "element")
+          h = doc_to_hash(response, "//data")&.dig("data", "element")
           h = [h] if h.class == Hash
           add_meta(response, h)
         end
@@ -196,7 +196,7 @@ module Nextcloud
         # @return [Hash] Information about Federated Cloud Share with meta response
         def find(shareid)
           response = @api.request(:get, "/remote_shares/#{shareid}")
-          h = doc_to_hash(response, "//data").try(:[], "data")
+          h = doc_to_hash(response, "//data")&.[]("data")
           add_meta(response, h)
         end
       end
