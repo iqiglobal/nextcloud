@@ -1,5 +1,13 @@
 module Nextcloud
   class Api
+    # Bound every request so a hung Nextcloud instance cannot pin the calling
+    # thread on Net::HTTP's 60s defaults. read/write are per-idle-read timeouts
+    # (they reset on each chunk), so 30s does not cap total transfer time for
+    # large downloads/uploads — it only trips a genuinely stalled connection.
+    OPEN_TIMEOUT  = 5
+    READ_TIMEOUT  = 30
+    WRITE_TIMEOUT = 30
+
     attr_reader :url, :username, :password
     protected :url
     protected :username
@@ -25,7 +33,10 @@ module Nextcloud
     # @return [Object] Nokogiri::XML::Document
     def request(method, path, params = nil, body = nil, depth = nil, destination = nil, raw = false)
       response = Net::HTTP.start(@url.host, @url.port,
-        use_ssl: @url.scheme == "https") do |http|
+        use_ssl: @url.scheme == "https",
+        open_timeout: OPEN_TIMEOUT,
+        read_timeout: READ_TIMEOUT,
+        write_timeout: WRITE_TIMEOUT) do |http|
         req = Kernel.const_get("Net::HTTP::#{method.capitalize}").new(@url.request_uri + path)
         req["OCS-APIRequest"] = true
         req.basic_auth @username, @password
